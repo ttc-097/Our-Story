@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Story 🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0d0015;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #stars-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── POPUP ── */
+    #popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 0, 20, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+    }
+
+    #popup-box {
+      background: linear-gradient(135deg, #1a0030 0%, #2d0050 100%);
+      border: 1px solid rgba(255, 150, 200, 0.3);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      width: min(380px, 90vw);
+      text-align: center;
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7) translateY(30px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    #popup-box .lock-icon { font-size: 3rem; margin-bottom: 0.5rem; display: block; }
+    #popup-box h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #ffb3d9; margin-bottom: 0.4rem; }
+    #popup-box p { font-size: 0.82rem; color: rgba(255,200,230,0.7); margin-bottom: 1.4rem; }
+
+    #nickname-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 50px;
+      border: 1.5px solid rgba(255,150,200,0.4);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      outline: none;
+      transition: border 0.3s;
+      letter-spacing: 1px;
+    }
+    #nickname-input:focus { border-color: rgba(255,150,200,0.9); }
+    #nickname-input::placeholder { color: rgba(255,200,220,0.4); }
+
+    #enter-btn {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(90deg, #c2185b, #7b1fa2);
+      color: #fff;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    #enter-btn:hover { opacity: 0.9; transform: scale(1.03); }
+
+    #popup-error {
+      margin-top: 0.7rem;
+      font-size: 0.8rem;
+      color: #ff6b9d;
+      min-height: 1.2rem;
+    }
+
+    @keyframes shake {
+      0%,100%{ transform: translateX(0); }
+      25%{ transform: translateX(-8px); }
+      75%{ transform: translateX(8px); }
+    }
+
+    /* ── MAIN ── */
+    #main-content { display: none; position: relative; z-index: 1; min-height: 100vh; }
+
+    /* ── HERO ── */
+    .hero { text-align: center; padding: 5rem 1rem 3rem; }
+    .hero .subtitle {
+      font-size: 0.85rem; letter-spacing: 3px;
+      color: rgba(255,180,220,0.7);
+      text-transform: uppercase; margin-bottom: 0.8rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      background: linear-gradient(135deg, #f8bbd0, #ce93d8, #f8bbd0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2; margin-bottom: 0.5rem;
+    }
+    .heart-divider { font-size: 1.5rem; margin: 1rem 0; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.2); } }
+
+    /* ── TIMER ── */
+    .timer-section { max-width: 700px; margin: 0 auto 4rem; padding: 0 1rem; text-align: center; }
+    .timer-label {
+      font-size: 0.8rem; letter-spacing: 2px;
+      color: rgba(255,180,220,0.6);
+      text-transform: uppercase; margin-bottom: 1.5rem;
+    }
+    .timer-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; }
+
+    .timer-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,150,200,0.2);
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      min-width: 100px;
+      position: relative; overflow: hidden;
+    }
+    .timer-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #c2185b, #7b1fa2, #c2185b);
+    }
+    .timer-number {
+      font-size: 2.8rem; font-weight: 600;
+      background: linear-gradient(135deg, #f48fb1, #ce93d8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1; display: block;
+    }
+    .timer-unit { font-size: 0.7rem; letter-spacing: 1.5px; color: rgba(255,180,220,0.5); text-transform: uppercase; margin-top: 0.3rem; }
+
+    /* ── MILESTONE ── */
+    .milestone-section { max-width: 500px; margin: 0 auto 4rem; padding: 0 1rem; text-align: center; }
+    .milestone-label { font-size: 0.82rem; color: rgba(255,180,220,0.6); margin-bottom: 0.7rem; }
+    .milestone-bar-bg { height: 6px; background: rgba(255,255,255,0.08); border-radius: 50px; overflow: hidden; }
+    .milestone-bar-fill { height: 100%; background: linear-gradient(90deg, #c2185b, #7b1fa2); border-radius: 50px; transition: width 1s ease; }
+    .milestone-text { margin-top: 0.5rem; font-size: 0.78rem; color: rgba(255,200,220,0.5); }
+
+    /* ── SECTION HEADING ── */
+    .section-heading {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      color: #f8bbd0; margin-bottom: 2rem;
+    }
+
+    /* ── FLOATING CARDS ── */
+    .photos-section { padding: 2rem 1rem 4rem; max-width: 900px; margin: 0 auto; }
+    .cards-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; }
+
+    .floating-card {
+      position: relative; border-radius: 16px; overflow: hidden;
+      border: 2px solid rgba(255,150,200,0.25);
+      cursor: pointer; transition: box-shadow 0.3s;
+      background: rgba(255,255,255,0.04);
+    }
+    .floating-card:nth-child(1) { animation: float1 6s ease-in-out infinite; }
+    .floating-card:nth-child(2) { animation: float2 7s ease-in-out infinite 0.5s; }
+    .floating-card:nth-child(3) { animation: float3 5.5s ease-in-out infinite 1s; }
+
+    @keyframes float1 { 0%,100%{ transform: translateY(0) rotate(-2deg); } 50%{ transform: translateY(-12px) rotate(-1deg); } }
+    @keyframes float2 { 0%,100%{ transform: translateY(0) rotate(2deg); } 50%{ transform: translateY(-16px) rotate(1.5deg); } }
+    @keyframes float3 { 0%,100%{ transform: translateY(0) rotate(-1.5deg); } 50%{ transform: translateY(-10px) rotate(-0.5deg); } }
+
+    .floating-card:hover { box-shadow: 0 20px 50px rgba(194,24,91,0.3); }
+    .floating-card img { width: 240px; height: 280px; object-fit: cover; display: block; }
+    .card-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(10,0,20,0.85));
+      padding: 1.5rem 1rem 0.8rem;
+      font-size: 0.78rem; color: rgba(255,200,220,0.85);
+      text-align: center; letter-spacing: 1px;
+    }
+    .card-placeholder {
+      width: 240px; height: 280px;
+      background: rgba(255,255,255,0.04);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.5rem;
+      color: rgba(255,180,220,0.4); font-size: 0.8rem;
+    }
+    .card-placeholder span { font-size: 2.5rem; }
+
+    /* ── SCREENSHOT ── */
+    .screenshot-section { padding: 2rem 1rem 4rem; max-width: 500px; margin: 0 auto; text-align: center; }
+    .screenshot-frame {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,150,200,0.2);
+      border-radius: 24px; padding: 1rem;
+    }
+    .screenshot-frame::before {
+      content: 'First Conversation 💬';
+      display: block; font-size: 0.75rem;
+      color: rgba(255,180,220,0.5);
+      letter-spacing: 1px; margin-bottom: 0.8rem;
+      text-transform: uppercase;
+    }
+    .screenshot-frame img { width: 100%; border-radius: 16px; display: block; }
+    .screenshot-placeholder {
+      width: 100%; min-height: 300px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 16px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.7rem;
+      color: rgba(255,180,220,0.35); font-size: 0.82rem;
+      border: 1.5px dashed rgba(255,150,200,0.2);
+    }
+    .screenshot-placeholder span { font-size: 3rem; }
+
+    /* ── FOOTER ── */
+    footer { text-align: center; padding: 3rem 1rem 2rem; font-size: 0.78rem; color: rgba(255,180,220,0.3); letter-spacing: 1px; }
+
+    /* ── MUSIC PLAYER ── */
+    #music-player {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      z-index: 500;
+      display: flex; align-items: center; gap: 0.7rem;
+      background: rgba(20, 0, 40, 0.85);
+      border: 1px solid rgba(255,150,200,0.25);
+      border-radius: 50px;
+      padding: 0.55rem 1.1rem 0.55rem 0.6rem;
+      backdrop-filter: blur(12px);
+      animation: slideUp 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    #music-toggle {
+      width: 36px; height: 36px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, #c2185b, #7b1fa2);
+      color: #fff; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, opacity 0.2s; flex-shrink: 0;
+    }
+    #music-toggle:hover { transform: scale(1.1); opacity: 0.9; }
+    .music-info { display: flex; flex-direction: column; gap: 1px; }
+    .music-title {
+      font-size: 0.72rem; font-weight: 500;
+      color: rgba(255,200,225,0.9);
+      white-space: nowrap; max-width: 160px;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .music-sub { font-size: 0.62rem; color: rgba(255,160,200,0.5); }
+
+    .eq-bars { display: flex; align-items: flex-end; gap: 2px; height: 16px; }
+    .eq-bars span {
+      display: block; width: 3px;
+      background: linear-gradient(#f48fb1, #ce93d8);
+      border-radius: 2px;
+    }
+    .eq-bars.playing span:nth-child(1) { animation: eq1 0.6s ease-in-out infinite alternate; }
+    .eq-bars.playing span:nth-child(2) { animation: eq2 0.5s ease-in-out infinite alternate 0.1s; }
+    .eq-bars.playing span:nth-child(3) { animation: eq3 0.7s ease-in-out infinite alternate 0.2s; }
+    .eq-bars.playing span:nth-child(4) { animation: eq4 0.45s ease-in-out infinite alternate 0.05s; }
+    @keyframes eq1 { from{ height: 4px; } to{ height: 14px; } }
+    @keyframes eq2 { from{ height: 8px; } to{ height: 16px; } }
+    @keyframes eq3 { from{ height: 3px; } to{ height: 12px; } }
+    @keyframes eq4 { from{ height: 6px; } to{ height: 14px; } }
+
+    /* ── LIGHTBOX ── */
+    #lightbox {
+      display: none; position: fixed; inset: 0;
+      background: rgba(5,0,15,0.95);
+      z-index: 999; align-items: center; justify-content: center;
+      cursor: pointer; backdrop-filter: blur(4px);
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 16px; border: 1px solid rgba(255,150,200,0.3); }
+  </style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+
+<!-- POPUP -->
+<div id="popup-overlay">
+  <div id="popup-box">
+    <span class="lock-icon">🔐</span>
+    <h2>Secret Garden</h2>
+    <p>শুধু বিশেষ কেউ এখানে ঢুকতে পারবে<br/>তোমার nickname টা লিখো</p>
+    <input id="nickname-input" type="text" placeholder="Nickname লিখো..." autocomplete="off" />
+    <button id="enter-btn">Enter ✨</button>
+    <div id="popup-error"></div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main-content">
+
+  <section class="hero">
+    <p class="subtitle">our little universe</p>
+    <h1>A story that began<br/>with a hello 🌸</h1>
+    <div class="heart-divider">💕</div>
+    <p style="color:rgba(255,200,220,0.5); font-size:0.85rem;">১০ ফেব্রুয়ারি ২০২৪ থেকে শুরু</p>
+  </section>
+
+  <section class="timer-section">
+    <p class="timer-label">আমরা একসাথে আছি</p>
+    <div class="timer-grid">
+      <div class="timer-card"><span class="timer-number" id="t-days">0</span><div class="timer-unit">দিন</div></div>
+      <div class="timer-card"><span class="timer-number" id="t-hours">0</span><div class="timer-unit">ঘণ্টা</div></div>
+      <div class="timer-card"><span class="timer-number" id="t-mins">0</span><div class="timer-unit">মিনিট</div></div>
+      <div class="timer-card"><span class="timer-number" id="t-secs">0</span><div class="timer-unit">সেকেন্ড</div></div>
+    </div>
+  </section>
+
+  <div class="milestone-section" id="milestone-section"></div>
+
+  <section class="photos-section">
+    <h2 class="section-heading">কিছু মুহূর্ত 📸</h2>
+    <div class="cards-container">
+
+      <!-- ছবি ১ — photos/photo1.jpg নামে রাখো -->
+      <div class="floating-card" onclick="openLightbox(this)">
+        <img src="photos/photo1.jpg" alt="Nisu"
+          onerror="this.outerHTML='<div class=\'card-placeholder\'><span>🌸</span><p>photo1.jpg</p></div>'" />
+        <div class="card-label">ছবি ১ ✨</div>
+      </div>
+
+      <!-- ছবি ২ — photos/photo2.jpg নামে রাখো -->
+      <div class="floating-card" onclick="openLightbox(this)">
+        <img src="photos/photo2.jpg" alt="Nisu"
+          onerror="this.outerHTML='<div class=\'card-placeholder\'><span>💜</span><p>photo2.jpg</p></div>'" />
+        <div class="card-label">ছবি ২ 💕</div>
+      </div>
+
+      <!-- ছবি ৩ — photos/photo3.jpg নামে রাখো -->
+      <div class="floating-card" onclick="openLightbox(this)">
+        <img src="photos/photo3.jpg" alt="Nisu"
+          onerror="this.outerHTML='<div class=\'card-placeholder\'><span>⭐</span><p>photo3.jpg</p></div>'" />
+        <div class="card-label">ছবি ৩ 🌙</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="screenshot-section">
+    <h2 class="section-heading">সেই প্রথম কথা 💬</h2>
+    <div class="screenshot-frame">
+      <!-- photos/screenshot.jpg নামে রাখো -->
+      <img src="photos/screenshot.jpg" alt="First conversation"
+        onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><span>💬</span><p>screenshot.jpg রাখো photos/ ফোল্ডারে</p></div>'" />
+    </div>
+  </section>
+
+  <footer>made with 💕 · our story since 10.02.2024</footer>
+</div>
+
+<!-- MUSIC PLAYER -->
+<div id="music-player" style="display:none;">
+  <button id="music-toggle" title="Play/Pause">▶</button>
+  <div class="music-info">
+    <span class="music-title" id="music-title">our song</span>
+    <span class="music-sub">our song 🎵</span>
+  </div>
+  <div class="eq-bars" id="eq-bars">
+    <span style="height:6px"></span>
+    <span style="height:10px"></span>
+    <span style="height:4px"></span>
+    <span style="height:8px"></span>
+  </div>
+</div>
+
+<!-- গান: music/our-song.mp3 নামে রাখো -->
+<audio id="bg-music" loop>
+  <source src="music/our-song.mp3" type="audio/mpeg" />
+</audio>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="full size" />
+</div>
+
+<script>
+  /* ── STARS ── */
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars(n) {
+    stars = [];
+    for (let i = 0; i < n; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.5 + 0.3,
+        speed: Math.random() * 0.6 + 0.2,
+        opacity: Math.random(),
+        twinkleSpeed: Math.random() * 0.02 + 0.005,
+        twinkleDir: 1
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.opacity += s.twinkleSpeed * s.twinkleDir;
+      if (s.opacity >= 1) s.twinkleDir = -1;
+      if (s.opacity <= 0) {
+        s.twinkleDir = 1;
+        s.y = -5;
+        s.x = Math.random() * canvas.width;
+      }
+      s.y += s.speed;
+      if (s.y > canvas.height + 5) {
+        s.y = -5;
+        s.x = Math.random() * canvas.width;
+      }
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 220, 240, ${Math.max(0, Math.min(1, s.opacity))})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+
+  resizeCanvas();
+  initStars(200);
+  drawStars();
+  window.addEventListener('resize', () => { resizeCanvas(); initStars(200); });
+
+  /* ── POPUP ── */
+  const CORRECT = 'Nisu';
+
+  document.getElementById('enter-btn').addEventListener('click', tryEnter);
+  document.getElementById('nickname-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryEnter();
+  });
+
+  function tryEnter() {
+    const val = document.getElementById('nickname-input').value.trim();
+    const err = document.getElementById('popup-error');
+    if (val.toLowerCase() === CORRECT.toLowerCase()) {
+      const overlay = document.getElementById('popup-overlay');
+      overlay.style.transition = 'opacity 0.5s';
+      overlay.style.opacity = '0';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        startTimer();
+        renderMilestone();
+        initMusic();
+      }, 500);
+    } else {
+      err.textContent = '❌ এই nickname টা ঠিক নেই!';
+      err.style.animation = 'none';
+      void err.offsetWidth;
+      err.style.animation = 'shake 0.4s';
+      document.getElementById('nickname-input').value = '';
+    }
+  }
+
+  /* ── TIMER ── */
+  const START = new Date('2024-02-10T00:00:00');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function startTimer() {
+    function update() {
+      const total = Math.floor((new Date() - START) / 1000);
+      document.getElementById('t-days').textContent  = Math.floor(total / 86400);
+      document.getElementById('t-hours').textContent = pad(Math.floor((total % 86400) / 3600));
+      document.getElementById('t-mins').textContent  = pad(Math.floor((total % 3600) / 60));
+      document.getElementById('t-secs').textContent  = pad(total % 60);
+    }
+    update();
+    setInterval(update, 1000);
+  }
+
+  /* ── MILESTONE ── */
+  function renderMilestone() {
+    const milestones = [100, 200, 365, 500, 730, 1000];
+    const daysPassed = Math.floor((new Date() - START) / 86400000);
+    const next = milestones.find(m => m > daysPassed) || milestones[milestones.length - 1];
+    const prevIdx = milestones.indexOf(next) - 1;
+    const prev = prevIdx >= 0 ? milestones[prevIdx] : 0;
+    const pct = Math.min(100, Math.round(((daysPassed - prev) / (next - prev)) * 100));
+    const remaining = next - daysPassed;
+    document.getElementById('milestone-section').innerHTML = `
+      <p class="milestone-label">পরবর্তী মাইলস্টোন: <strong style="color:#f48fb1">${next} দিন</strong> — আর মাত্র ${remaining} দিন বাকি!</p>
+      <div class="milestone-bar-bg"><div class="milestone-bar-fill" style="width:${pct}%"></div></div>
+      <p class="milestone-text">${daysPassed} / ${next} দিন · ${pct}% সম্পূর্ণ</p>`;
+  }
+
+  /* ── MUSIC ── */
+  function initMusic() {
+    const player  = document.getElementById('music-player');
+    const audio   = document.getElementById('bg-music');
+    const btn     = document.getElementById('music-toggle');
+    const eqBars  = document.getElementById('eq-bars');
+
+    player.style.display = 'flex';
+
+    function setPlaying(playing) {
+      btn.textContent = playing ? '⏸' : '▶';
+      if (playing) eqBars.classList.add('playing');
+      else eqBars.classList.remove('playing');
+    }
+
+    audio.volume = 0;
+    audio.play().then(() => {
+      setPlaying(true);
+      let vol = 0;
+      const fade = setInterval(() => {
+        vol = Math.min(0.75, vol + 0.03);
+        audio.volume = vol;
+        if (vol >= 0.75) clearInterval(fade);
+      }, 80);
+    }).catch(() => {
+      setPlaying(false);
+    });
+
+    btn.addEventListener('click', () => {
+      if (audio.paused) { audio.play(); setPlaying(true); }
+      else { audio.pause(); setPlaying(false); }
+    });
+  }
+
+  /* ── LIGHTBOX ── */
+  function openLightbox(card) {
+    const img = card.querySelector('img');
+    if (!img) return;
+    document.getElementById('lightbox-img').src = img.src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+</script>
+</body>
+</html>
