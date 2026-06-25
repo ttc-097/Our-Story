@@ -24,12 +24,64 @@
       z-index: 0;
     }
 
+    /* ── LOADING SCREEN ── */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: #0d0015;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      transition: opacity 0.8s ease;
+    }
+
+    .loading-heart {
+      font-size: 3.5rem;
+      animation: loadPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes loadPulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    .loading-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: rgba(255,180,220,0.8);
+      letter-spacing: 2px;
+    }
+
+    .loading-bar-bg {
+      width: 180px;
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50px;
+      overflow: hidden;
+    }
+
+    .loading-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #c2185b, #7b1fa2);
+      border-radius: 50px;
+      animation: loadBar 1.8s ease forwards;
+    }
+
+    @keyframes loadBar {
+      0%   { width: 0%; }
+      100% { width: 100%; }
+    }
+
     /* ── POPUP ── */
     #popup-overlay {
       position: fixed;
       inset: 0;
       background: rgba(10, 0, 20, 0.92);
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
@@ -97,15 +149,19 @@
 
     @keyframes shake {
       0%,100%{ transform: translateX(0); }
-      25%{ transform: translateX(-8px); }
-      75%{ transform: translateX(8px); }
+      25%    { transform: translateX(-8px); }
+      75%    { transform: translateX(8px); }
     }
 
     /* ── MAIN ── */
     #main-content { display: none; position: relative; z-index: 1; min-height: 100vh; }
 
     /* ── HERO ── */
-    .hero { text-align: center; padding: 5rem 1rem 3rem; }
+    .hero {
+      text-align: center;
+      padding: 5rem 1rem 3rem;
+      position: relative;
+    }
     .hero .subtitle {
       font-size: 0.85rem; letter-spacing: 3px;
       color: rgba(255,180,220,0.7);
@@ -170,6 +226,17 @@
       color: #f8bbd0; margin-bottom: 2rem;
     }
 
+    /* ── PHOTO REVEAL (scroll animation) ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* ── FLOATING CARDS ── */
     .photos-section { padding: 2rem 1rem 4rem; max-width: 900px; margin: 0 auto; }
     .cards-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; }
@@ -231,6 +298,108 @@
       border: 1.5px dashed rgba(255,150,200,0.2);
     }
     .screenshot-placeholder span { font-size: 3rem; }
+
+    /* ── SECRET MESSAGE SECTION ── */
+    .secret-section {
+      max-width: 500px;
+      margin: 0 auto 4rem;
+      padding: 0 1rem;
+      text-align: center;
+    }
+
+    #secret-btn {
+      padding: 0.9rem 2.5rem;
+      border-radius: 50px;
+      border: 1.5px solid rgba(255,150,200,0.4);
+      background: transparent;
+      color: #f8bbd0;
+      font-size: 0.95rem;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #secret-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #c2185b, #7b1fa2);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    #secret-btn:hover::before { opacity: 1; }
+    #secret-btn:hover { border-color: transparent; color: #fff; }
+    #secret-btn span { position: relative; z-index: 1; }
+
+    /* secret popup */
+    #secret-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5,0,15,0.88);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+    }
+    #secret-overlay.open { display: flex; }
+
+    #secret-box {
+      background: linear-gradient(135deg, #1a0030, #2d0050);
+      border: 1px solid rgba(255,150,200,0.3);
+      border-radius: 28px;
+      padding: 2.5rem 2rem;
+      width: min(420px, 90vw);
+      text-align: center;
+      position: relative;
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    #secret-box .secret-emoji { font-size: 2.5rem; margin-bottom: 1rem; display: block; animation: pulse 2s ease-in-out infinite; }
+
+    #secret-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: #ffb3d9;
+      margin-bottom: 1.2rem;
+    }
+
+    #secret-box p {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: rgba(255,210,230,0.85);
+    }
+
+    #secret-close {
+      margin-top: 1.5rem;
+      padding: 0.6rem 2rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255,150,200,0.3);
+      background: transparent;
+      color: rgba(255,180,220,0.7);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #secret-close:hover { background: rgba(255,150,200,0.1); color: #fff; }
+
+    /* floating petals in secret box */
+    .petal {
+      position: absolute;
+      font-size: 1.2rem;
+      animation: petalFall linear infinite;
+      pointer-events: none;
+      opacity: 0;
+    }
+    @keyframes petalFall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+    }
 
     /* ── FOOTER ── */
     footer { text-align: center; padding: 3rem 1rem 2rem; font-size: 0.78rem; color: rgba(255,180,220,0.3); letter-spacing: 1px; }
@@ -298,7 +467,16 @@
 
 <canvas id="stars-canvas"></canvas>
 
-<!-- POPUP -->
+<!-- ── LOADING SCREEN ── -->
+<div id="loading-screen">
+  <div class="loading-heart">💕</div>
+  <div class="loading-text">loading our story...</div>
+  <div class="loading-bar-bg">
+    <div class="loading-bar-fill"></div>
+  </div>
+</div>
+
+<!-- ── POPUP ── -->
 <div id="popup-overlay">
   <div id="popup-box">
     <span class="lock-icon">🔐</span>
@@ -310,7 +488,7 @@
   </div>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- ── MAIN CONTENT ── -->
 <div id="main-content">
 
   <section class="hero">
@@ -320,7 +498,7 @@
     <p style="color:rgba(255,200,220,0.5); font-size:0.85rem;">১০ ফেব্রুয়ারি ২০২৪ থেকে শুরু</p>
   </section>
 
-  <section class="timer-section">
+  <section class="timer-section reveal">
     <p class="timer-label">আমরা একসাথে আছি</p>
     <div class="timer-grid">
       <div class="timer-card"><span class="timer-number" id="t-days">0</span><div class="timer-unit">দিন</div></div>
@@ -330,49 +508,62 @@
     </div>
   </section>
 
-  <div class="milestone-section" id="milestone-section"></div>
+  <div class="milestone-section reveal" id="milestone-section"></div>
 
   <section class="photos-section">
-    <h2 class="section-heading">কিছু মুহূর্ত 📸</h2>
+    <h2 class="section-heading reveal">কিছু মুহূর্ত 📸</h2>
     <div class="cards-container">
-
-      <!-- ছবি ১ — photos/photo1.jpg নামে রাখো -->
-      <div class="floating-card" onclick="openLightbox(this)">
+      <div class="floating-card reveal" onclick="openLightbox(this)">
         <img src="Photos/photo1.jpg" alt="Nisu"
           onerror="this.outerHTML='<div class=\'card-placeholder\'><span>🌸</span><p>photo1.jpg</p></div>'" />
         <div class="card-label">ছবি ১ ✨</div>
       </div>
-
-      <!-- ছবি ২ — photos/photo2.jpg নামে রাখো -->
-      <div class="floating-card" onclick="openLightbox(this)">
+      <div class="floating-card reveal" onclick="openLightbox(this)">
         <img src="Photos/photo2.jpg" alt="Nisu"
           onerror="this.outerHTML='<div class=\'card-placeholder\'><span>💜</span><p>photo2.jpg</p></div>'" />
         <div class="card-label">ছবি ২ 💕</div>
       </div>
-
-      <!-- ছবি ৩ — photos/photo3.jpg নামে রাখো -->
-      <div class="floating-card" onclick="openLightbox(this)">
+      <div class="floating-card reveal" onclick="openLightbox(this)">
         <img src="Photos/photo3.jpg" alt="Nisu"
           onerror="this.outerHTML='<div class=\'card-placeholder\'><span>⭐</span><p>photo3.jpg</p></div>'" />
         <div class="card-label">ছবি ৩ 🌙</div>
       </div>
-
     </div>
   </section>
 
-  <section class="screenshot-section">
+  <section class="screenshot-section reveal">
     <h2 class="section-heading">সেই প্রথম কথা 💬</h2>
     <div class="screenshot-frame">
-      <!-- photos/screenshot.jpg নামে রাখো -->
       <img src="Photos/screenshot.jpg" alt="First conversation"
-        onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><span>💬</span><p>screenshot.jpg রাখো photos/ ফোল্ডারে</p></div>'" />
+        onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><span>💬</span><p>screenshot.jpg রাখো Photos/ ফোল্ডারে</p></div>'" />
     </div>
+  </section>
+
+  <!-- ── SECRET MESSAGE ── -->
+  <section class="secret-section reveal">
+    <h2 class="section-heading">একটা কথা আছে 🤫</h2>
+    <button id="secret-btn"><span>💌 Secret Message খোলো</span></button>
   </section>
 
   <footer>made with 💕 · our story since 10.02.2024</footer>
 </div>
 
-<!-- MUSIC PLAYER -->
+<!-- ── SECRET MESSAGE POPUP ── -->
+<div id="secret-overlay">
+  <div id="secret-box">
+    <span class="secret-emoji">💌</span>
+    <h3>তোমার জন্য...</h3>
+    <!-- ✏️ এখানে তোমার message লিখো -->
+    <p id="secret-message">
+      তুমি জানো না, প্রতিটা দিন তোমার সাথে কথা বলাটা আমার কাছে কতটা special।<br/><br/>
+      তুমি আমার সবচেয়ে প্রিয় মানুষগুলোর একজন। 🌸<br/><br/>
+      — তোমার জন্য সবসময় 💕
+    </p>
+    <button id="secret-close">বন্ধ করো ✕</button>
+  </div>
+</div>
+
+<!-- ── MUSIC PLAYER ── -->
 <div id="music-player" style="display:none;">
   <button id="music-toggle" title="Play/Pause">▶</button>
   <div class="music-info">
@@ -387,12 +578,11 @@
   </div>
 </div>
 
-<!-- গান: music/our-song.mp3 নামে রাখো -->
 <audio id="bg-music" loop>
   <source src="Music/our-song.mp3" type="audio/mpeg" />
 </audio>
 
-<!-- LIGHTBOX -->
+<!-- ── LIGHTBOX ── -->
 <div id="lightbox" onclick="closeLightbox()">
   <img id="lightbox-img" src="" alt="full size" />
 </div>
@@ -428,16 +618,9 @@
     stars.forEach(s => {
       s.opacity += s.twinkleSpeed * s.twinkleDir;
       if (s.opacity >= 1) s.twinkleDir = -1;
-      if (s.opacity <= 0) {
-        s.twinkleDir = 1;
-        s.y = -5;
-        s.x = Math.random() * canvas.width;
-      }
+      if (s.opacity <= 0) { s.twinkleDir = 1; s.y = -5; s.x = Math.random() * canvas.width; }
       s.y += s.speed;
-      if (s.y > canvas.height + 5) {
-        s.y = -5;
-        s.x = Math.random() * canvas.width;
-      }
+      if (s.y > canvas.height + 5) { s.y = -5; s.x = Math.random() * canvas.width; }
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(255, 220, 240, ${Math.max(0, Math.min(1, s.opacity))})`;
@@ -446,10 +629,27 @@
     requestAnimationFrame(drawStars);
   }
 
-  resizeCanvas();
-  initStars(200);
-  drawStars();
+  resizeCanvas(); initStars(200); drawStars();
   window.addEventListener('resize', () => { resizeCanvas(); initStars(200); });
+
+  /* ── LOADING SCREEN ── */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const ls = document.getElementById('loading-screen');
+      ls.style.opacity = '0';
+      setTimeout(() => {
+        ls.style.display = 'none';
+        const overlay = document.getElementById('popup-overlay');
+        overlay.style.display = 'flex';
+      }, 800);
+    }, 2000);
+  });
+
+  /* ── PARALLAX ── */
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    canvas.style.transform = `translateY(${scrollY * 0.3}px)`;
+  });
 
   /* ── POPUP ── */
   const CORRECT = 'Nisu';
@@ -472,6 +672,7 @@
         startTimer();
         renderMilestone();
         initMusic();
+        initReveal();
       }, 500);
     } else {
       err.textContent = '❌ এই nickname টা ঠিক নেই!';
@@ -482,9 +683,24 @@
     }
   }
 
+  /* ── SCROLL REVEAL ── */
+  function initReveal() {
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, i * 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    items.forEach(el => observer.observe(el));
+  }
+
   /* ── TIMER ── */
   const START = new Date('2024-02-10T00:00:00');
-
   function pad(n) { return String(n).padStart(2, '0'); }
 
   function startTimer() {
@@ -495,8 +711,7 @@
       document.getElementById('t-mins').textContent  = pad(Math.floor((total % 3600) / 60));
       document.getElementById('t-secs').textContent  = pad(total % 60);
     }
-    update();
-    setInterval(update, 1000);
+    update(); setInterval(update, 1000);
   }
 
   /* ── MILESTONE ── */
@@ -516,17 +731,15 @@
 
   /* ── MUSIC ── */
   function initMusic() {
-    const player  = document.getElementById('music-player');
-    const audio   = document.getElementById('bg-music');
-    const btn     = document.getElementById('music-toggle');
-    const eqBars  = document.getElementById('eq-bars');
-
+    const player = document.getElementById('music-player');
+    const audio  = document.getElementById('bg-music');
+    const btn    = document.getElementById('music-toggle');
+    const eqBars = document.getElementById('eq-bars');
     player.style.display = 'flex';
 
-    function setPlaying(playing) {
-      btn.textContent = playing ? '⏸' : '▶';
-      if (playing) eqBars.classList.add('playing');
-      else eqBars.classList.remove('playing');
+    function setPlaying(p) {
+      btn.textContent = p ? '⏸' : '▶';
+      p ? eqBars.classList.add('playing') : eqBars.classList.remove('playing');
     }
 
     audio.volume = 0;
@@ -538,14 +751,45 @@
         audio.volume = vol;
         if (vol >= 0.75) clearInterval(fade);
       }, 80);
-    }).catch(() => {
-      setPlaying(false);
-    });
+    }).catch(() => setPlaying(false));
 
     btn.addEventListener('click', () => {
       if (audio.paused) { audio.play(); setPlaying(true); }
       else { audio.pause(); setPlaying(false); }
     });
+  }
+
+  /* ── SECRET MESSAGE ── */
+  const secretOverlay = document.getElementById('secret-overlay');
+  const secretBox     = document.getElementById('secret-box');
+
+  document.getElementById('secret-btn').addEventListener('click', () => {
+    secretOverlay.classList.add('open');
+    spawnPetals();
+  });
+
+  document.getElementById('secret-close').addEventListener('click', () => {
+    secretOverlay.classList.remove('open');
+  });
+
+  secretOverlay.addEventListener('click', (e) => {
+    if (e.target === secretOverlay) secretOverlay.classList.remove('open');
+  });
+
+  function spawnPetals() {
+    const emojis = ['🌸','💕','✨','🌷','💫','🩷'];
+    for (let i = 0; i < 8; i++) {
+      const p = document.createElement('span');
+      p.className = 'petal';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.left = Math.random() * 100 + '%';
+      p.style.top = '0';
+      p.style.animationDuration = (2 + Math.random() * 2) + 's';
+      p.style.animationDelay = (Math.random() * 1) + 's';
+      p.style.fontSize = (0.8 + Math.random() * 0.8) + 'rem';
+      secretBox.appendChild(p);
+      setTimeout(() => p.remove(), 4000);
+    }
   }
 
   /* ── LIGHTBOX ── */
@@ -555,7 +799,6 @@
     document.getElementById('lightbox-img').src = img.src;
     document.getElementById('lightbox').classList.add('open');
   }
-
   function closeLightbox() {
     document.getElementById('lightbox').classList.remove('open');
   }
