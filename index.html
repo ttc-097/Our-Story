@@ -653,16 +653,19 @@
 
   /* ── POPUP ── */
   const CORRECT = 'Nisu';
+  const CORRECT_2 = 'Juna';
 
   document.getElementById('enter-btn').addEventListener('click', tryEnter);
   document.getElementById('nickname-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') tryEnter();
   });
 
-  function tryEnter() {
-    const val = document.getElementById('nickname-input').value.trim();
+function tryEnter() {
+    const val = document.getElementById('nickname-input').value.trim().toLowerCase();
     const err = document.getElementById('popup-error');
-    if (val.toLowerCase() === CORRECT.toLowerCase()) {
+    
+    // ২টি নামের যেকোনো একটির সাথে মিললেই ভেতরে ঢুকতে দেবে
+    if (val === CORRECT_1.toLowerCase() || val === CORRECT_2.toLowerCase()) {
       const overlay = document.getElementById('popup-overlay');
       overlay.style.transition = 'opacity 0.5s';
       overlay.style.opacity = '0';
@@ -681,6 +684,7 @@
       err.style.animation = 'shake 0.4s';
       document.getElementById('nickname-input').value = '';
     }
+  }
   }
 
   /* ── SCROLL REVEAL ── */
