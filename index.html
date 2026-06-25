@@ -467,7 +467,6 @@
 
 <canvas id="stars-canvas"></canvas>
 
-<!-- ── LOADING SCREEN ── -->
 <div id="loading-screen">
   <div class="loading-heart">💕</div>
   <div class="loading-text">loading our story...</div>
@@ -476,7 +475,6 @@
   </div>
 </div>
 
-<!-- ── POPUP ── -->
 <div id="popup-overlay">
   <div id="popup-box">
     <span class="lock-icon">🔐</span>
@@ -488,7 +486,6 @@
   </div>
 </div>
 
-<!-- ── MAIN CONTENT ── -->
 <div id="main-content">
 
   <section class="hero">
@@ -539,7 +536,6 @@
     </div>
   </section>
 
-  <!-- ── SECRET MESSAGE ── -->
   <section class="secret-section reveal">
     <h2 class="section-heading">একটা কথা আছে 🤫</h2>
     <button id="secret-btn"><span>💌 Secret Message খোলো</span></button>
@@ -548,12 +544,10 @@
   <footer>made with 💕 · our story since 10.02.2025</footer>
 </div>
 
-<!-- ── SECRET MESSAGE POPUP ── -->
 <div id="secret-overlay">
   <div id="secret-box">
     <span class="secret-emoji">💌</span>
     <h3>তোমার জন্য...</h3>
-    <!-- ✏️ এখানে তোমার message লিখো -->
     <p id="secret-message">
       তুমি জানো না, প্রতিটা দিন তোমার সাথে কথা বলাটা আমার কাছে কতটা special।<br/><br/>
       তুমি আমার সবচেয়ে প্রিয় মানুষগুলোর একজন। 🌸<br/><br/>
@@ -563,7 +557,6 @@
   </div>
 </div>
 
-<!-- ── MUSIC PLAYER ── -->
 <div id="music-player" style="display:none;">
   <button id="music-toggle" title="Play/Pause">▶</button>
   <div class="music-info">
@@ -582,7 +575,6 @@
   <source src="Music/our-song.mp3" type="audio/mpeg" />
 </audio>
 
-<!-- ── LIGHTBOX ── -->
 <div id="lightbox" onclick="closeLightbox()">
   <img id="lightbox-img" src="" alt="full size" />
 </div>
@@ -652,7 +644,7 @@
   });
 
   /* ── POPUP ── */
-  const CORRECT = 'Nisu';
+  const CORRECT_1 = 'Nisu';
   const CORRECT_2 = 'Juna';
 
   document.getElementById('enter-btn').addEventListener('click', tryEnter);
@@ -660,11 +652,10 @@
     if (e.key === 'Enter') tryEnter();
   });
 
-function tryEnter() {
+  function tryEnter() {
     const val = document.getElementById('nickname-input').value.trim().toLowerCase();
     const err = document.getElementById('popup-error');
     
-    // ২টি নামের যেকোনো একটির সাথে মিললেই ভেতরে ঢুকতে দেবে
     if (val === CORRECT_1.toLowerCase() || val === CORRECT_2.toLowerCase()) {
       const overlay = document.getElementById('popup-overlay');
       overlay.style.transition = 'opacity 0.5s';
