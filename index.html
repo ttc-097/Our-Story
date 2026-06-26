@@ -14,6 +14,21 @@
       color: #fff;
       min-height: 100vh;
       overflow-x: hidden;
+      transition: background 2s ease;
+    }
+
+    /* ── DAY/NIGHT SKY ── */
+    body.sky-day {
+      background: linear-gradient(180deg, #1a3a6e 0%, #2d6fa8 40%, #f4a460 80%, #e8826e 100%);
+    }
+    body.sky-night {
+      background: linear-gradient(180deg, #020010 0%, #0d0025 50%, #1a0030 100%);
+    }
+    body.sky-dawn {
+      background: linear-gradient(180deg, #1a0a2e 0%, #6b2d6b 35%, #c2527a 65%, #f4956e 100%);
+    }
+    body.sky-dusk {
+      background: linear-gradient(180deg, #0d1535 0%, #2d2060 30%, #8b3a7e 60%, #f0724e 100%);
     }
 
     #stars-canvas {
@@ -408,6 +423,99 @@
     /* ── FOOTER ── */
     footer { text-align: center; padding: 3rem 1rem 2rem; font-size: 0.78rem; color: rgba(255,180,220,0.3); letter-spacing: 1px; }
 
+    /* ── OUR SKY ── */
+    .sky-section {
+      max-width: 700px;
+      margin: 0 auto 4rem;
+      padding: 0 1rem;
+      text-align: center;
+    }
+
+    .sky-canvas-wrap {
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1.5px solid rgba(255,150,200,0.2);
+      height: 320px;
+      cursor: pointer;
+    }
+
+    #sky-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Star labels */
+    .sky-label {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      pointer-events: none;
+      transition: transform 0.3s ease;
+    }
+
+    .sky-label .star-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      box-shadow: 0 0 12px 4px currentColor;
+      animation: starPulse 2s ease-in-out infinite;
+    }
+
+    .sky-label .star-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.82rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px currentColor;
+      white-space: nowrap;
+    }
+
+    @keyframes starPulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.4); opacity: 0.7; }
+    }
+
+    .sky-time-badge {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      font-size: 0.68rem;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      background: rgba(0,0,0,0.25);
+      padding: 0.3rem 0.7rem;
+      border-radius: 50px;
+      backdrop-filter: blur(4px);
+    }
+
+    .sky-caption {
+      margin-top: 1rem;
+      font-size: 0.78rem;
+      color: rgba(255,180,220,0.45);
+      letter-spacing: 1px;
+    }
+
+    /* shooting star animation */
+    .shooting-star {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), #fff);
+      border-radius: 2px;
+      pointer-events: none;
+      animation: shoot linear forwards;
+    }
+    @keyframes shoot {
+      0%   { opacity: 1; transform: translateX(0) translateY(0); }
+      100% { opacity: 0; transform: translateX(180px) translateY(80px); }
+    }
+
+    @media (max-width: 480px) {
+      .sky-canvas-wrap { height: 240px; }
+      .sky-label .star-name { font-size: 0.72rem; }
+    }
+
     /* ── MUSIC PLAYER ── */
     #music-player {
       position: fixed;
@@ -544,8 +652,88 @@
       .card-placeholder { width: 200px; height: 240px; }
       .timer-card { min-width: 80px; padding: 1rem 1.2rem; }
       .timer-number { font-size: 2.2rem; }
-      #music-player { bottom: 1rem; right: 1rem; }
+      #music-player { bottom: 1rem; left: 50%; transform: translateX(-50%); }
     }
+
+    /* ── MISS COUNTER ── */
+    .miss-section {
+      max-width: 500px;
+      margin: 0 auto 4rem;
+      padding: 0 1rem;
+      text-align: center;
+    }
+
+    .miss-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,150,200,0.2);
+      border-radius: 24px;
+      padding: 2rem 1.5rem;
+    }
+
+    .miss-count-display {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #f48fb1, #ce93d8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+
+    .miss-count-label {
+      font-size: 0.78rem;
+      color: rgba(255,180,220,0.5);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    #miss-btn {
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, #c2185b, #7b1fa2);
+      color: #fff;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(194,24,91,0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #miss-btn:active { transform: scale(0.96); }
+    #miss-btn:hover { box-shadow: 0 6px 28px rgba(194,24,91,0.55); }
+
+    .miss-last {
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      color: rgba(255,180,220,0.35);
+      letter-spacing: 1px;
+    }
+
+    /* ── HEART RAIN ── */
+    .heart-rain-piece {
+      position: fixed;
+      pointer-events: none;
+      font-size: 1.4rem;
+      animation: heartFall linear forwards;
+      z-index: 8000;
+      user-select: none;
+    }
+
+    @keyframes heartFall {
+      0%   { transform: translateY(-30px) rotate(0deg) scale(0.5); opacity: 1; }
+      70%  { opacity: 1; }
+      100% { transform: translateY(105vh) rotate(30deg) scale(1); opacity: 0; }
+    }
+
   </style>
 </head>
 <body>
@@ -630,7 +818,38 @@
     <button id="secret-btn"><span>💌 Secret Message খোলো</span></button>
   </section>
 
-  <footer>made with 💕 · our story since 10.02.2026</footer>
+  <!-- ── MISS COUNTER ── -->
+  <section class="miss-section reveal">
+    <h2 class="section-heading">আমি তোকে Miss করি 💕</h2>
+    <div class="miss-card">
+      <span class="miss-count-display" id="miss-count">0</span>
+      <span class="miss-count-label">বার miss করেছি</span>
+      <button id="miss-btn">💗 Miss করছি এখন</button>
+      <p class="miss-last" id="miss-last"></p>
+    </div>
+  </section>
+
+  <!-- ── OUR SKY ── -->
+  <section class="sky-section reveal">
+    <h2 class="section-heading">আমাদের আকাশ 🌌</h2>
+    <div class="sky-canvas-wrap" id="sky-wrap">
+      <canvas id="sky-canvas"></canvas>
+      <!-- Jona star -->
+      <div class="sky-label" id="label-jona">
+        <div class="star-dot" style="color:#f9a8d4; background:#f9a8d4;"></div>
+        <span class="star-name" style="color:#fbcfe8;">Jona ✦</span>
+      </div>
+      <!-- Nisu star -->
+      <div class="sky-label" id="label-nisu">
+        <div class="star-dot" style="color:#a78bfa; background:#a78bfa;"></div>
+        <span class="star-name" style="color:#c4b5fd;">Nisu ✦</span>
+      </div>
+      <div class="sky-time-badge" id="sky-badge">🌙 রাতের আকাশ</div>
+    </div>
+    <p class="sky-caption">Jona আর Nisu — সবসময় পাশাপাশি ✨</p>
+  </section>
+
+  <footer id="main-footer">made with 💕 · our story since 10.02.2026</footer>
 </div>
 
 <!-- ── SECRET MESSAGE POPUP ── -->
@@ -761,6 +980,8 @@ function tryEnter() {
         renderMilestone();
         initMusic();
         initReveal();
+        initSky();
+        initMissCounter();
       }, 500);
     } else {
       err.textContent = '❌ এই nickname টা ঠিক নেই!';
@@ -877,6 +1098,136 @@ function tryEnter() {
       p.style.fontSize = (0.8 + Math.random() * 0.8) + 'rem';
       secretBox.appendChild(p);
       setTimeout(() => p.remove(), 4000);
+    }
+  }
+
+  /* ── DAY/NIGHT SKY ── */
+  function initSky() {
+    const hour = new Date().getHours();
+    const body = document.body;
+    const badge = document.getElementById('sky-badge');
+    if (hour >= 5 && hour < 8) {
+      body.classList.add('sky-dawn');
+      if(badge) badge.textContent = '🌅 ভোরের আকাশ';
+    } else if (hour >= 8 && hour < 17) {
+      body.classList.add('sky-day');
+      if(badge) badge.textContent = '☀️ দিনের আকাশ';
+    } else if (hour >= 17 && hour < 20) {
+      body.classList.add('sky-dusk');
+      if(badge) badge.textContent = '🌆 সন্ধ্যার আকাশ';
+    } else {
+      body.classList.add('sky-night');
+      if(badge) badge.textContent = '🌙 রাতের আকাশ';
+    }
+    drawSkyCanvas(hour);
+  }
+
+  function drawSkyCanvas(hour) {
+    const c = document.getElementById('sky-canvas');
+    if (!c) return;
+    const cx = c.getContext('2d');
+    c.width = c.parentElement.offsetWidth || 400;
+    c.height = 220;
+    const W = c.width, H = c.height;
+
+    let grad = cx.createLinearGradient(0,0,0,H);
+    const isNight = hour < 5 || hour >= 20;
+    const isDawn  = hour >= 5 && hour < 8;
+    const isDusk  = hour >= 17 && hour < 20;
+
+    if (isDawn) {
+      grad.addColorStop(0,'#1a0a2e'); grad.addColorStop(0.5,'#8b3a7e'); grad.addColorStop(1,'#f4956e');
+    } else if (hour >= 8 && hour < 17) {
+      grad.addColorStop(0,'#1a4080'); grad.addColorStop(0.6,'#3a7fc1'); grad.addColorStop(1,'#87ceeb');
+    } else if (isDusk) {
+      grad.addColorStop(0,'#0d1535'); grad.addColorStop(0.5,'#8b3a7e'); grad.addColorStop(1,'#f0724e');
+    } else {
+      grad.addColorStop(0,'#020010'); grad.addColorStop(0.6,'#0d0025'); grad.addColorStop(1,'#1a0030');
+    }
+    cx.fillStyle = grad; cx.fillRect(0,0,W,H);
+
+    if (isNight || isDawn || isDusk) {
+      for (let i=0;i<55;i++) {
+        cx.beginPath(); cx.arc(Math.random()*W, Math.random()*H*0.75, Math.random()*1.1+0.2, 0, Math.PI*2);
+        cx.fillStyle = `rgba(255,230,255,${Math.random()*0.6+0.2})`; cx.fill();
+      }
+    }
+
+    // Sun
+    if (hour >= 8 && hour < 17) {
+      const sg = cx.createRadialGradient(W*0.75,H*0.28,2,W*0.75,H*0.28,28);
+      sg.addColorStop(0,'rgba(255,255,200,1)'); sg.addColorStop(0.5,'rgba(255,220,80,0.8)'); sg.addColorStop(1,'rgba(255,180,0,0)');
+      cx.fillStyle=sg; cx.beginPath(); cx.arc(W*0.75,H*0.28,28,0,Math.PI*2); cx.fill();
+    } else if (isNight) {
+      cx.fillStyle='rgba(255,245,220,0.92)'; cx.beginPath(); cx.arc(W*0.8,H*0.22,18,0,Math.PI*2); cx.fill();
+      cx.fillStyle='rgba(10,0,30,0.6)'; cx.beginPath(); cx.arc(W*0.8+8,H*0.22-4,15,0,Math.PI*2); cx.fill();
+    }
+
+    function drawNamedStar(x,y,name,gColor,sColor,size) {
+      const gg = cx.createRadialGradient(x,y,0,x,y,size*4);
+      gg.addColorStop(0,gColor); gg.addColorStop(1,'rgba(0,0,0,0)');
+      cx.fillStyle=gg; cx.beginPath(); cx.arc(x,y,size*4,0,Math.PI*2); cx.fill();
+      cx.fillStyle=sColor; cx.beginPath();
+      for(let i=0;i<10;i++){
+        const a=(Math.PI/5)*i-Math.PI/2, r=i%2===0?size:size*0.4;
+        i===0?cx.moveTo(x+r*Math.cos(a),y+r*Math.sin(a)):cx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));
+      }
+      cx.closePath(); cx.fill();
+      cx.font=`bold ${Math.min(13,W*0.033)}px Poppins,sans-serif`;
+      cx.fillStyle='rgba(255,230,255,0.92)'; cx.textAlign='center';
+      cx.shadowColor=sColor; cx.shadowBlur=8;
+      cx.fillText(name,x,y+size+18); cx.shadowBlur=0;
+    }
+
+    drawNamedStar(W*0.30, H*0.35, 'Jona ✦', 'rgba(255,150,200,0.5)', '#f48fb1', 10);
+    drawNamedStar(W*0.70, H*0.28, 'Nisu ✦', 'rgba(180,150,255,0.5)', '#ce93d8', 10);
+
+    const lg = cx.createLinearGradient(W*0.30,H*0.35,W*0.70,H*0.28);
+    lg.addColorStop(0,'rgba(244,143,177,0.5)'); lg.addColorStop(1,'rgba(206,147,216,0.5)');
+    cx.beginPath(); cx.moveTo(W*0.30+14,H*0.35); cx.lineTo(W*0.70-14,H*0.28);
+    cx.strokeStyle=lg; cx.lineWidth=1.5; cx.setLineDash([4,6]); cx.stroke(); cx.setLineDash([]);
+  }
+
+  /* ── MISS COUNTER ── */
+  function initMissCounter() {
+    const KEY_COUNT = 'miss_count';
+    const KEY_LAST  = 'miss_last_time';
+    let count = parseInt(localStorage.getItem(KEY_COUNT)||'0');
+    document.getElementById('miss-count').textContent = count;
+    updateMissLast();
+
+    document.getElementById('miss-btn').addEventListener('click',()=>{
+      count++;
+      localStorage.setItem(KEY_COUNT, count);
+      localStorage.setItem(KEY_LAST, Date.now());
+      document.getElementById('miss-count').textContent = count;
+      updateMissLast();
+      launchHeartRain();
+    });
+
+    function updateMissLast() {
+      const last = localStorage.getItem(KEY_LAST);
+      const el = document.getElementById('miss-last');
+      if (!last) { el.textContent=''; return; }
+      const d = new Date(parseInt(last));
+      el.textContent = `সর্বশেষ: ${d.toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'})} · ${d.toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'})}`;
+    }
+  }
+
+  /* ── HEART RAIN ── */
+  function launchHeartRain() {
+    const hearts=['💕','💗','💓','💖','💝','🩷','❤️','💞'];
+    for(let i=0;i<70;i++){
+      setTimeout(()=>{
+        const el=document.createElement('div');
+        el.className='heart-rain-piece';
+        el.textContent=hearts[Math.floor(Math.random()*hearts.length)];
+        el.style.left=(Math.random()*100)+'vw';
+        el.style.fontSize=(0.9+Math.random()*1.4)+'rem';
+        el.style.animationDuration=(2.5+Math.random()*2)+'s';
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),5000);
+      },i*35);
     }
   }
 
