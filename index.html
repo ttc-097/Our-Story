@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>for you</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:       #09070f;
+      --surface:  #110d1c;
+      --border:   rgba(200, 170, 220, 0.12);
+      --rose:     #c9a0b8;
+      --muted:    rgba(200, 170, 220, 0.35);
+      --text:     rgba(230, 215, 235, 0.82);
+      --text-dim: rgba(200, 170, 220, 0.40);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    /* ── subtle grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LOCK SCREEN ── */
+    #lock {
+      width: min(340px, 100%);
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .lock-glyph {
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      opacity: 0.35;
+      letter-spacing: 2px;
+    }
+
+    .lock-field {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-align: center;
+      padding: 0.6rem 0;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .lock-field::placeholder { color: var(--text-dim); letter-spacing: 2px; }
+    .lock-field:focus { border-color: var(--rose); }
+
+    .lock-btn {
+      display: block;
+      margin: 1.8rem auto 0;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 0.65rem 2.2rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .lock-btn:hover { border-color: var(--rose); color: var(--rose); }
+
+    .lock-err {
+      text-align: center;
+      font-size: 0.7rem;
+      color: #b07;
+      letter-spacing: 1px;
+      margin-top: 0.9rem;
+      min-height: 1rem;
+      transition: opacity 0.3s;
+    }
+
+    @keyframes shakeX {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-7px); }
+      75%      { transform: translateX(7px); }
+    }
+
+    /* ── LETTER ── */
+    #letter {
+      display: none;
+      width: min(480px, 100%);
+      position: relative;
+      z-index: 1;
+    }
+
+    .letter-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3rem 2.8rem 2.6rem;
+      position: relative;
+      box-shadow: 0 0 80px rgba(120, 60, 160, 0.07);
+      animation: fadeUp 0.7s ease 0.1s both;
+    }
+
+    /* left ruled line */
+    .letter-wrap::before {
+      content: '';
+      position: absolute;
+      left: 2.2rem;
+      top: 2.8rem;
+      bottom: 2.6rem;
+      width: 1px;
+      background: rgba(180, 130, 200, 0.07);
+    }
+
+    .letter-date {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 2.2rem;
+    }
+
+    .letter-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.15rem, 2.4vw, 1.28rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.85;
+      color: rgba(230, 215, 235, 0.78);
+    }
+
+    .letter-body em {
+      font-style: normal;
+      color: rgba(230, 215, 235, 0.55);
+    }
+
+    .letter-sig {
+      margin-top: 2.2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.92rem;
+      font-weight: 300;
+      color: var(--text-dim);
+      letter-spacing: 0.5px;
+    }
+
+    /* thin rule above signature */
+    .letter-rule {
+      width: 32px;
+      height: 1px;
+      background: var(--border);
+      margin: 1.8rem 0 1.2rem;
+    }
+
+    /* ── SHARED ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .letter-wrap { padding: 2.2rem 1.6rem 2rem; }
+      .letter-wrap::before { left: 1.4rem; top: 2.2rem; bottom: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOCK SCREEN ── -->
+<div id="lock">
+  <p class="lock-glyph">— ✦ —</p>
+  <input id="nick" class="lock-field" type="text" placeholder="your name" autocomplete="off" spellcheck="false" />
+  <button class="lock-btn" id="enter-btn">enter</button>
+  <p class="lock-err" id="lock-err"></p>
+</div>
+
+<!-- ── LETTER ── -->
+<div id="letter">
+  <div class="letter-wrap">
+    <p class="letter-date" id="letter-date"></p>
+
+    <p class="letter-body">
+      I think I haven't been able to take care of you properly.<br /><br />
+      I saw in the group that there are many people who care about you.<br /><br />
+      I hope you are well with them.
+    </p>
+
+    <div class="letter-rule"></div>
+    <p class="letter-sig">— with everything I couldn't say</p>
+  </div>
+</div>
+
+<script>
+  const NAMES = ['nisu', 'jona'];
+
+  const nick    = document.getElementById('nick');
+  const btn     = document.getElementById('enter-btn');
+  const errEl   = document.getElementById('lock-err');
+  const lock    = document.getElementById('lock');
+  const letter  = document.getElementById('letter');
+  const dateEl  = document.getElementById('letter-date');
+
+  function tryEnter() {
+    const val = nick.value.trim().toLowerCase();
+    if (NAMES.includes(val)) {
+      // write date
+      const d = new Date();
+      dateEl.textContent = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      lock.style.transition = 'opacity 0.45s';
+      lock.style.opacity = '0';
+      setTimeout(() => {
+        lock.style.display = 'none';
+        letter.style.display = 'block';
+      }, 450);
+    } else {
+      errEl.textContent = 'that name isn\'t right';
+      lock.style.animation = 'none';
+      void lock.offsetWidth;
+      lock.style.animation = 'shakeX 0.35s ease';
+      nick.value = '';
+      nick.focus();
+    }
+  }
+
+  btn.addEventListener('click', tryEnter);
+  nick.addEventListener('keydown', e => { if (e.key === 'Enter') tryEnter(); });
+</script>
+</body>
+</html>
